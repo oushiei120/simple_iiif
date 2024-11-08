@@ -328,8 +328,6 @@ for key in all_bib.keys():
 
 base_html_cont = ''
 all_html_cont = ''.join(all_html_url)
-base_title = 'ブラックジャックによろしく 全13巻 IIIF公開デモサイト'
-base_credit = '佐藤秀峰'
 
 base_html_file = f'''
         <!DOCTYPE html>
