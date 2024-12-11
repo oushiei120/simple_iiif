@@ -5,17 +5,19 @@ import csv
 import json
 from PIL import Image
 
-base_url = 'https://oushiei120.github.io/simple_iiif'
+base_url = '/Users/oushiei/Documents/GitHub/simple_iiif'
 thum_page = 1
 new_width = 240
 
-base_title = '関西観光'
-base_credit = '佐藤秀峰'
+base_title = '関西旅行'
+base_credit = '関西旅行'
 
-#########HTML表示画面用のメタデータ項目の設定
+
+
 metadata_dict = {}
 all_bib = {}
 all_html_url = []
+#########HTML表示画面用のメタデータ項目の設定
 metadata_dict['title_ja'] = "タイトル"
 metadata_dict['volume'] = "巻"
 metadata_dict['author_ja'] = "著者"
@@ -50,16 +52,6 @@ with open('metadata.tsv', newline='', encoding='utf_8_sig') as csvfile:
         rn = rn + 1;     
 
 #print (all_bib)
-style = '''
-    h1{font-size:16px;}
-    table{cellpadding:10px}
-    body { font-family: Arial, sans-serif; }
-    table { border-collapse: collapse; width: 100%; }
-    td, th { padding: 8px; border: 1px solid #ddd; }
-    img { vertical-align: middle; }
-    a { text-decoration: none; color: #0066cc; }
-'''
-
 for key in all_bib.keys():
     each_manifest = {}
     all_meta = []
@@ -216,71 +208,52 @@ for key in all_bib.keys():
         cn = 0
         sequence = {}
         canvases = []
-        img_1st_url = ''
-        # 使用 sorted 确保按文件名顺序处理图像
-        for file_path in sorted(glob.glob(os.path.join(key, '*.jpg'))):
+        #print (list_file_names)
+        for file_path in list_file_names:
             service = {}
             resource = {}
             mani_image = {}
             canvas = {}
             anno_page = {}
-            
-            cn = cn + 1
-            canvas_number = 'p'+str(cn)+'.json'
-            
-            # 生成图像的 URL
-            image_url_id = base_url+'/'+file_path
-            
-            # 如果是第一张图，保存其 URL
-            if cn == 1:
-                img_1st_url = image_url_id
-            
-            # 图像服务信息
-            service['context'] = 'http://iiif.io/api/image/2/context.json' 
-            service['id'] = image_url_id
-            service['profile'] = 'http://iiif.io/api/image/2/level0.json'
-            
-            # 打开图像获取尺寸
-            img = Image.open(file_path)
-            width, height = img.size
-            
-            # 资源信息
-            resource['type'] = 'Image'
-            resource['format'] = 'image/jpeg'
-            resource['width'] = width
-            resource['height'] = height
-            resource['id'] = image_url_id
-            
-            # 在 V3 manifest 中添加 canvas
-            canvas['id'] = base_url+'/'+key+'/'+canvas_number
-            canvas['type'] = 'Canvas'
-            canvas['height'] = height
-            canvas['width'] = width
-            
-            # 注解页
-            anno_page['id'] = base_url+'/'+key+'/page/p'+str(cn)
-            anno_page['type'] = 'AnnotationPage'
-            
-            # 创建注解
-            annotation = {
-                'id': base_url+'/'+key+'/annotation/p'+str(cn),
-                'type': 'Annotation',
-                'motivation': 'painting',
-                'body': {
-                    'id': image_url_id,
-                    'type': 'Image',
-                    'format': 'image/jpeg',
-                    'width': width,
-                    'height': height
-                },
-                'target': canvas['id']
-            }
-            
-            anno_page['items'] = [annotation]
-            canvas['items'] = [anno_page]
-            canvases.append(canvas)
-        
-        # 将 canvases 添加到 manifest
+            file_dir = os.path.split(file_path)[0]
+            if os.path.isdir(file_dir):
+                cn = cn + 1
+                canvas_number = 'p'+str(cn)+'.json'
+                image_url_id = base_url+'/'+file_path
+                service['context'] = 'http://iiif.io/api/image/2/context.json' 
+                service['id']  = image_url_id
+                service['profile'] = 'http://iiif.io/api/image/2/level0.json'
+                img = Image.open(file_path)
+                width, height = img.size
+                resource['type'] = 'Image'
+                resource['format'] = 'image/jpeg'
+                resource['width'] = width
+                resource['height'] = height
+                resource['id'] = image_url_id
+                #resource['service'] = service
+                mani_image['type']  = 'Annotation'
+                mani_image['motivation']  = 'painting'
+                mani_image['body']  = resource
+                mani_image['id']  = base_url+'/'+file_dir+'/annotation/'+canvas_number
+                mani_image['target']  = base_url+'/'+file_dir+'/canvas/'+canvas_number
+                #canvas['label'] = 'p. '+str(cn)
+                anno_page['type'] = "AnnotationPage"
+                anno_page['id'] = base_url+'/'+file_dir+'/page/'+canvas_number+'/1'
+                anno_page['items'] = []
+                anno_page['items'].append(mani_image)
+                canvas['items'] = []
+                canvas['items'].append(anno_page)
+                canvas['width'] = width
+                canvas['height'] = height
+                canvas['type'] = 'Canvas'
+                canvas['id'] = base_url+'/'+file_dir+'/canvas/'+canvas_number
+                canvases.append(canvas)
+        #sequence['@id'] =  base_url+'/'+file_dir0+'/sequence/s1.json'
+        #sequence['@type'] =  'sc:Sequence'
+        #sequence['label'] =  'Current Page Order'
+        sequence['items'] = canvases
+        #each_manifest['items'] 
+        #each_manifest['items'] = []
         each_manifest['items'] = canvases
         write_file_path = file_dir0+'/manifest_v3.json'
         with open(write_file_path, mode='w') as f:
@@ -313,17 +286,10 @@ for key in all_bib.keys():
         metalabelvalue += '<a target="_blank" href="https://tify.rocks/?manifest='+maniurlv3+'" target="_blank"><img class="tify" src="https://dzkimgs.l.u-tokyo.ac.jp/omekas/files/asset/iiifviewers60f6d527d705d.svg" alt="TIFY" width="25"></a></td></tr>'
         metalabelvalue += '<tr><td>IIIF manifest <img class="iiiflogo" src="https://dzkimgs.l.u-tokyo.ac.jp/omekas/files/asset/iiifviewers60f6d527d5d02.svg" alt="iiif" width="25"></td><td><a href="'+maniurlv2+'" target="_blank">v2</a> <a href="'+maniurlv3+'" target="_blank">v3</a></td></tr>'
 
-        # 在使用style之前定义CSS样式
-        style = """
-            body { font-family: Arial, sans-serif; }
-            h1 { font-size: 24px; margin: 20px 0; }
-            table { border-collapse: collapse; width: 100%; }
-            td, th { padding: 8px; border: 1px solid #ddd; }
-            tr:nth-child(even) { background-color: #f2f2f2; }
-            img { vertical-align: middle; }
-            a { text-decoration: none; color: #0066cc; }
-            a:hover { text-decoration: underline; }
-        """
+        style = '''
+        h1{font-size:16px;}
+        table{cellpadding:10px}
+        '''
 
         htmldata = f'''
         <!DOCTYPE html>
