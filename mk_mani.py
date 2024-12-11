@@ -5,7 +5,7 @@ import csv
 import json
 from PIL import Image
 
-base_url = 'https://www.dhii.jp/nagasaki/blackjacky'
+base_url = 'https://oushiei120.github.io/simple_iiif'
 thum_page = 1
 new_width = 240
 
