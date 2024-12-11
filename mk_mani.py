@@ -12,12 +12,10 @@ new_width = 240
 base_title = 'ブラックジャックによろしく 全13巻 IIIF公開デモサイト'
 base_credit = '佐藤秀峰'
 
-
-
+#########HTML表示画面用のメタデータ項目の設定
 metadata_dict = {}
 all_bib = {}
 all_html_url = []
-#########HTML表示画面用のメタデータ項目の設定
 metadata_dict['title_ja'] = "タイトル"
 metadata_dict['volume'] = "巻"
 metadata_dict['author_ja'] = "著者"
@@ -52,6 +50,16 @@ with open('metadata.tsv', newline='', encoding='utf_8_sig') as csvfile:
         rn = rn + 1;     
 
 #print (all_bib)
+style = '''
+    h1{font-size:16px;}
+    table{cellpadding:10px}
+    body { font-family: Arial, sans-serif; }
+    table { border-collapse: collapse; width: 100%; }
+    td, th { padding: 8px; border: 1px solid #ddd; }
+    img { vertical-align: middle; }
+    a { text-decoration: none; color: #0066cc; }
+'''
+
 for key in all_bib.keys():
     each_manifest = {}
     all_meta = []
@@ -286,10 +294,17 @@ for key in all_bib.keys():
         metalabelvalue += '<a target="_blank" href="https://tify.rocks/?manifest='+maniurlv3+'" target="_blank"><img class="tify" src="https://dzkimgs.l.u-tokyo.ac.jp/omekas/files/asset/iiifviewers60f6d527d705d.svg" alt="TIFY" width="25"></a></td></tr>'
         metalabelvalue += '<tr><td>IIIF manifest <img class="iiiflogo" src="https://dzkimgs.l.u-tokyo.ac.jp/omekas/files/asset/iiifviewers60f6d527d5d02.svg" alt="iiif" width="25"></td><td><a href="'+maniurlv2+'" target="_blank">v2</a> <a href="'+maniurlv3+'" target="_blank">v3</a></td></tr>'
 
-        style = '''
-        h1{font-size:16px;}
-        table{cellpadding:10px}
-        '''
+        # 在使用style之前定义CSS样式
+        style = """
+            body { font-family: Arial, sans-serif; }
+            h1 { font-size: 24px; margin: 20px 0; }
+            table { border-collapse: collapse; width: 100%; }
+            td, th { padding: 8px; border: 1px solid #ddd; }
+            tr:nth-child(even) { background-color: #f2f2f2; }
+            img { vertical-align: middle; }
+            a { text-decoration: none; color: #0066cc; }
+            a:hover { text-decoration: underline; }
+        """
 
         htmldata = f'''
         <!DOCTYPE html>
