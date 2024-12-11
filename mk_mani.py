@@ -5,7 +5,7 @@ import csv
 import json
 from PIL import Image
 
-base_url = '/Users/oushiei/Documents/GitHub/simple_iiif'
+base_url = 'https://oushiei120.github.io/simple_iiif/'
 thum_page = 1
 new_width = 240
 
