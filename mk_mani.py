@@ -13,7 +13,6 @@ base_title = '関西旅行'
 base_credit = '関西旅行'
 
 
-
 metadata_dict = {}
 all_bib = {}
 all_html_url = []
