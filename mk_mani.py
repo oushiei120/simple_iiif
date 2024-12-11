@@ -9,7 +9,7 @@ base_url = 'https://oushiei120.github.io/simple_iiif'
 thum_page = 1
 new_width = 240
 
-base_title = 'ブラックジャックによろしく 全13巻 IIIF公開デモサイト'
+base_title = '関西観光'
 base_credit = '佐藤秀峰'
 
 #########HTML表示画面用のメタデータ項目の設定
